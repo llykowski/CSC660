@@ -1,7 +1,7 @@
 package edu.nku.common;
 
 public class LogicalClock {
-	private int currentTime;
+	private double currentTime;
 	
 	public LogicalClock(){
 		currentTime = 0;
@@ -11,7 +11,7 @@ public class LogicalClock {
 		currentTime++;
 	}
 	
-	public synchronized void incrementTimeBySleep(int sleepTime){
+	public synchronized void incrementTimeBySleep(double sleepTime){
 		currentTime += sleepTime;
 	}
 	
@@ -19,7 +19,7 @@ public class LogicalClock {
 		currentTime = Math.max(currentTime + 1, otherTime + 1);
 	}
 	
-	public synchronized int getCurrentTime(){
+	public synchronized double getCurrentTime(){
 		return currentTime;
 	}
 	
