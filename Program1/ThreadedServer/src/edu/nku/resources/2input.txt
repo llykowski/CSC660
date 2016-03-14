@@ -1,5 +1,0 @@
-12500
-0 "Hello, how are you 0?"
-5000
-1 "Hello number 1"
-6000
