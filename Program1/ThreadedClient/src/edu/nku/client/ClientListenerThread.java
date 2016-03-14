@@ -11,7 +11,7 @@ import edu.nku.common.Message;
 public class ClientListenerThread extends Thread {
 	private DataInputStream inputStream;
 	private LogicalClock currentLogicalLocalTime;
-
+	private boolean shouldRun;
 	// TODO: Pass LogicalClock to thread also
 	public ClientListenerThread(DataInputStream inputStream, LogicalClock currentLogicalLocalTime) {
 		this.inputStream = inputStream;
@@ -22,6 +22,7 @@ public class ClientListenerThread extends Thread {
 	// Listen for messages through the input stream. Parse JSON message.
 	// Increment Local time based on decision of MAX clock from other process
 	public void run() {
+		
 		while (shouldRun) {
 			try {
 				String jsonMessage = "";

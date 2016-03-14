@@ -15,7 +15,7 @@ public class LogicalClock {
 		currentTime += sleepTime;
 	}
 	
-	public synchronized void decideIncrement(int otherTime){
+	public synchronized void decideIncrement(double otherTime){
 		currentTime = Math.max(currentTime + 1, otherTime + 1);
 	}
 	
