@@ -6,16 +6,15 @@ import java.io.IOException;
 import com.google.gson.Gson;
 
 import edu.nku.common.Message;
+import edu.nku.common.MessageSenderThread;
 
 public class ServerListenerThread extends Thread {
 	private Server server;
 	private DataInputStream inputStream;
-	private boolean shouldRun;
 
 	public ServerListenerThread(Server server, DataInputStream inputStream) {
 		this.server = server;
 		this.inputStream = inputStream;
-		this.shouldRun = true;
 		start();
 	}
 
@@ -23,36 +22,28 @@ public class ServerListenerThread extends Thread {
 	// Read toThread name/ID from message.
 	// Send message to toThread.
 	public void run() {
-		
-		while (shouldRun) {
+		while (!Thread.interrupted()) {
 			try {
 				String jsonMessage = "";
-				int element;
-				while((element = inputStream.read()) != -1)
-				{
-					char elementChar = (char) element;
-					if(String.valueOf(elementChar).equals("{") || jsonMessage.length() >= 1)
-					{
-						jsonMessage = jsonMessage + String.valueOf(elementChar);	
-					} else {
-						continue;
-					}
-					
-					if(String.valueOf(elementChar).equals("}"))
-					{
-						System.out.println(jsonMessage);
-						Gson g = new Gson();
-						Message messageReceived = g.fromJson(jsonMessage, Message.class);
-						server.sendMessage(messageReceived.toThread, messageReceived);
-						jsonMessage = "";
-					}
-					
+				synchronized (inputStream) {
+					jsonMessage = inputStream.readUTF();
 				}
-				
+				Gson g = new Gson();
+				Message messageReceived = g.fromJson(jsonMessage, Message.class);
+
+				// Message from client that it has reached the End of File
+				// Tell the server end of file has been reached
+				// Close this listener thread
+				if (messageReceived.messageBody.equals("END_OF_FILE")) {
+					server.eofReceived();
+					this.interrupt();
+				} else {
+					new MessageSenderThread(server.getOutputStream(messageReceived.toThread), messageReceived);
+				}
 			} catch (IOException e) {
 				System.out.println("Error processing in ServerListenerThread - will exit");
-				shouldRun = false;
 				e.printStackTrace();
+				this.interrupt();
 			}
 		}
 	}

@@ -8,19 +8,23 @@ import com.google.gson.Gson;
 public class MessageSenderThread extends Thread {
 	private DataOutputStream outputStream;
 	private Message message;
-	public MessageSenderThread(DataOutputStream outputStream, Message message){
+
+	public MessageSenderThread(DataOutputStream outputStream, Message message) {
 		this.outputStream = outputStream;
 		this.message = message;
 		this.start();
 	}
-	
-	public void run(){
+
+	// Write a message out to the outputStream as JSON
+	public void run() {
 		try {
 			Gson g = new Gson();
-			outputStream.writeUTF(g.toJson(message));
+			synchronized (outputStream) {
+				outputStream.writeUTF(g.toJson(message));
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 }

@@ -1,4 +1,10 @@
 0 "Hello, how are you 0?"
+0 "Hello number 0"
+3 "Message to 3"
+20000
+2 "Message to 2"
 3000
-2 "Hello number 2"
-3000
+4 "Message given to 4"
+1000
+2 "Back to 2"
+2 "I Like 2"
